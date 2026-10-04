@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <title>CutLab - Browser Image Cutter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>CutLab</h1>
+      <p>ブラウザだけで使える画像切り抜きツール</p>
+    </div>
+    <div class="top-actions">
+      <label class="button primary">画像を開く<input id="fileInput" type="file" accept="image/*" hidden /></label>
+      <button id="exportBtn" class="button" disabled>PNG保存</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="panel tools-panel">
+      <h2>ツール</h2>
+      <div class="tool-grid" id="toolGrid">
+        <button class="tool active" data-tool="pan">移動</button>
+        <button class="tool" data-tool="rect">四角</button>
+        <button class="tool" data-tool="polygon">多角形</button>
+        <button class="tool" data-tool="brush">残すブラシ</button>
+        <button class="tool" data-tool="eraser">消しゴム</button>
+        <button class="tool" data-tool="restore">復元</button>
+        <button class="tool" data-tool="chroma">クロマキー</button>
+      </div>
+
+      <section class="group">
+        <h3>編集</h3>
+        <div class="row buttons-row">
+          <button id="undoBtn" class="button small" disabled>Undo</button>
+          <button id="redoBtn" class="button small" disabled>Redo</button>
+          <button id="resetBtn" class="button small danger" disabled>リセット</button>
+        </div>
+      </section>
+
+      <section class="group" id="brushControls">
+        <h3>ブラシ</h3>
+        <label>サイズ <span id="brushSizeValue">32</span>px
+          <input id="brushSize" type="range" min="1" max="200" value="32" />
+        </label>
+        <label>硬さ <span id="brushHardnessValue">90</span>%
+          <input id="brushHardness" type="range" min="0" max="100" value="90" />
+        </label>
+      </section>
+
+      <section class="group" id="chromaControls">
+        <h3>クロマキー</h3>
+        <div class="row">
+          <button id="pickColorBtn" class="button small">スポイト</button>
+          <input id="keyColor" type="color" value="#00ff00" />
+        </div>
+        <div class="preset-row">
+          <button class="chip" data-color="#00ff00">Green</button>
+          <button class="chip" data-color="#0000ff">Blue</button>
+          <button class="chip" data-color="#ffffff">White</button>
+          <button class="chip" data-color="#000000">Black</button>
+        </div>
+        <label>許容値 <span id="toleranceValue">60</span>
+          <input id="tolerance" type="range" min="0" max="255" value="60" />
+        </label>
+        <label>エッジ <span id="softnessValue">40</span>
+          <input id="softness" type="range" min="0" max="150" value="40" />
+        </label>
+        <label>色かぶり除去 <span id="spillValue">35</span>%
+          <input id="spill" type="range" min="0" max="100" value="35" />
+        </label>
+        <label class="check"><input id="connectedOnly" type="checkbox" checked /> 背景と連続した領域だけを抜く</label>
+        <div class="row buttons-row">
+          <button id="previewChromaBtn" class="button small" disabled>プレビュー</button>
+          <button id="applyChromaBtn" class="button small primary" disabled>適用</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <h3>表示</h3>
+        <label>ズーム <span id="zoomValue">100</span>%
+          <input id="zoomSlider" type="range" min="10" max="400" value="100" />
+        </label>
+        <label class="check"><input id="checkerToggle" type="checkbox" checked /> 透明チェッカー</label>
+        <label class="check"><input id="maskToggle" type="checkbox" /> マスクを赤表示</label>
+      </section>
+    </aside>
+
+    <section class="workspace-wrap">
+      <div id="dropHint" class="drop-hint">
+        <strong>画像をここにドロップ</strong>
+        <span>または「画像を開く」から選択</span>
+      </div>
+      <div id="stage" class="stage checker">
+        <canvas id="canvas"></canvas>
+        <canvas id="overlay"></canvas>
+      </div>
+      <div class="statusbar">
+        <span id="statusText">画像を読み込んでください</span>
+        <span id="imageInfo"></span>
+      </div>
+    </section>
+
+    <aside class="panel help-panel">
+      <h2>使い方</h2>
+      <ol>
+        <li>画像を読み込みます。</li>
+        <li>クロマキーなら背景色をスポイトで選択します。</li>
+        <li>必要なら消しゴム・復元・残すブラシでマスクを修正します。</li>
+        <li>PNG保存で透過PNGを書き出します。</li>
+      </ol>
+      <p class="hint">多角形はクリックで点を追加、ダブルクリックで確定。四角はドラッグで指定します。</p>
+      <p class="hint">ホイールでズーム、Space+ドラッグまたは「移動」ツールでパンできます。</p>
+      <p class="privacy">画像はサーバーに送信されません。処理はブラウザ内で完結します。</p>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
